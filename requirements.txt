@@ -8,5 +8,4 @@ python-dotenv==1.0.1
 asyncpg==0.30.0
 pydantic==2.9.2
 alembic==1.17.2
-better-auth==1.4.10
 psycopg2-binary==2.9.9
