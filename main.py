@@ -9,6 +9,7 @@ from models.user import User
 from utils.database import engine, get_session
 from api.tasks import router as tasks_router
 from api.users import router as users_router
+from chat import router as chat_router
 from utils.auth import SECRET_KEY, ALGORITHM
 from datetime import datetime, timedelta
 from jose import jwt
@@ -33,6 +34,7 @@ app.add_middleware(
 # Include API routers
 app.include_router(tasks_router)
 app.include_router(users_router)
+app.include_router(chat_router)
 
 # Create database tables on startup
 @app.on_event("startup")
