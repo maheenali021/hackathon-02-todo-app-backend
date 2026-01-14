@@ -7,6 +7,7 @@ from typing import Dict, Any, List
 from openai import AsyncOpenAI
 from mcp.server import mcp_server
 from config import OPENROUTER_API_KEY, OPENROUTER_BASE_URL
+import httpx
 
 
 class TodoChatOrchestrator:
@@ -16,9 +17,17 @@ class TodoChatOrchestrator:
     """
 
     def __init__(self):
+        # Create a custom HTTP client without proxy settings to avoid compatibility issues
+        http_client = httpx.AsyncClient(
+            timeout=30.0,  # Set a reasonable timeout
+            # Explicitly avoid any proxy configuration
+        )
+
+        # Initialize AsyncOpenAI client with the custom HTTP client
         self.client = AsyncOpenAI(
             api_key=OPENROUTER_API_KEY,
-            base_url=OPENROUTER_BASE_URL
+            base_url=OPENROUTER_BASE_URL,
+            http_client=http_client
         )
         self.mcp_server = mcp_server
 
@@ -121,5 +130,16 @@ class TodoChatOrchestrator:
         }
 
 
-# Global instance of the orchestrator
-todo_orchestrator = TodoChatOrchestrator()
+# Global instance of the orchestrator (created lazily to avoid import-time errors)
+_todo_orchestrator_instance = None
+
+
+def get_todo_orchestrator():
+    global _todo_orchestrator_instance
+    if _todo_orchestrator_instance is None:
+        _todo_orchestrator_instance = TodoChatOrchestrator()
+    return _todo_orchestrator_instance
+
+
+# For backward compatibility
+todo_orchestrator = get_todo_orchestrator()

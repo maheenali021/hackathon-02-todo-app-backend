@@ -8,7 +8,7 @@ from typing import Optional, Dict, Any
 from pydantic import BaseModel
 from models.conversation import Conversation
 from models.message import Message
-from agents.todo_orchestrator import todo_orchestrator
+from agents.todo_orchestrator import get_todo_orchestrator
 from dependencies.auth import get_current_user_id
 from dependencies.db import get_session
 
@@ -96,7 +96,7 @@ async def chat_endpoint(
 
     # Process the message with the AI agent
     try:
-        result = await todo_orchestrator.process_message(
+        result = await get_todo_orchestrator().process_message(
             user_id=user_id,
             message=request.message,
             conversation_context=formatted_history[:-1]  # Exclude the current message
